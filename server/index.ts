@@ -4,7 +4,6 @@ import fs from 'fs';
 import { graphqlHTTP } from 'express-graphql'
 import { buildSchema } from 'graphql'
 import { generateUUID } from './helper';
-import { count } from 'console';
 
 const app = express();
 
@@ -13,13 +12,13 @@ const PORT = 3030;
 type LogType = { address: string; message: string; [key: string]: any };
 
 app.use((req: Request, res: Response, next: NextFunction): void => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // Handle preflight OPTIONS request
   if (req.method === "OPTIONS") {
-    res.sendStatus(204);
+    res.sendStatus(200);
+    return;
   }
 
   next();
@@ -107,11 +106,6 @@ const rootValue = {
       address: val[0],
       count: val[1]
     }))
-
-    console.log({
-      topThreeVisitedURLs,
-      mostActiveIPAddresses
-    })
 
     return {
       data: logsData,
